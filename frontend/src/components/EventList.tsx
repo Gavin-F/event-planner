@@ -16,7 +16,7 @@ interface Event {
   end_date: string;
 }
 
-export default function EventList() {
+export default function EventList({ refreshKey }: { refreshKey: number }) {
   const [events, setEvents] = useState<Event[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -39,9 +39,9 @@ export default function EventList() {
 
   useEffect(() => {
     fetchData();
-  }, [page]);
+  }, [page, refreshKey]);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     setPage(1);
     fetchData();
   };
@@ -65,17 +65,24 @@ export default function EventList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 items-center">
+      <form
+        className="flex gap-2 items-center"
+        onSubmit={(e) => {
+          e.preventDefault(); // ⛔ prevent page reload
+          handleSearch();     // ✅ trigger your search
+        }}
+      >
         <Input
           placeholder="Search events by title..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="max-w-sm"
         />
-        <Button variant="outline" onClick={handleSearch}>
+        <Button type="submit" variant="outline">
           <Search className="w-4 h-4" />
         </Button>
-      </div>
+      </form>
+
 
       <div className="grid gap-4">
         {events.map((event) => (
