@@ -1,11 +1,11 @@
-from ..models import Event
+from ..models.event_model import Event
 from .. import db
 
-def get_all_events():
-    return Event.query.order_by(Event.start_date).all()
-
-def get_event_by_id(event_id):
-    return Event.query.get_or_404(event_id)
+def get_all_events(page=1, limit=10):
+    query = Event.query.order_by(Event.start_date)
+    total = query.count()
+    events = query.offset((page - 1) * limit).limit(limit).all()
+    return events, total
 
 def create_event(data):
     event = Event(**data)
@@ -14,13 +14,19 @@ def create_event(data):
     return event
 
 def update_event(event_id, data):
-    event = get_event_by_id(event_id)
+    event = Event.query.get_or_404(event_id)
     for key, value in data.items():
         setattr(event, key, value)
     db.session.commit()
     return event
 
 def delete_event(event_id):
-    event = get_event_by_id(event_id)
+    event = Event.query.get_or_404(event_id)
     db.session.delete(event)
     db.session.commit()
+
+def search_events(title, page=1, limit=10):
+    query = Event.query.filter(Event.title.ilike(f"%{title}%")).order_by(Event.start_date)
+    total = query.count()
+    events = query.offset((page - 1) * limit).limit(limit).all()
+    return events, total

@@ -1,23 +1,151 @@
 "use client";
 
-import { Event } from "../types/Event";
+import { useEffect, useState } from "react";
+import { Trash2, Pencil, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { getEvents, deleteEvent, searchEvents } from "../services/api";
+import EventForm from "./EventForm";
 
-interface Props {
-  events: Event[];
+interface Event {
+  id: number;
+  title: string;
+  type: string;
+  start_date: string;
+  end_date: string;
 }
 
-export default function EventList({ events }: Props) {
+export default function EventList() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
+  const [editTarget, setEditTarget] = useState<Event | null>(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const LIMIT = 5;
+
+  const fetchData = async () => {
+    if (query.trim()) {
+      const res = await searchEvents(query, page, LIMIT);
+      setEvents(res.data);
+      setTotal(res.total);
+    } else {
+      const res = await getEvents(page, LIMIT);
+      setEvents(res.data);
+      setTotal(res.total);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page]);
+
+  const handleSearch = async () => {
+    setPage(1);
+    fetchData();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm("Delete this event?")) {
+      await deleteEvent(id);
+      fetchData();
+    }
+  };
+
+  const handleEdit = (event: Event) => {
+    setEditTarget(event);
+    setShowEdit(true);
+  };
+
+  const handleEdited = async () => {
+    setShowEdit(false);
+    fetchData();
+  };
+
   return (
-    <div className="space-y-3">
-      {events.map((event) => (
-        <div key={event.id} className="border rounded-xl p-4 bg-white shadow-sm">
-          <div className="text-lg font-medium">{event.title}</div>
-          <div className="text-sm text-muted-foreground">{event.type}</div>
-          <div className="text-sm">
-            {event.start_date} → {event.end_date}
+    <div className="space-y-4">
+      <div className="flex gap-2 items-center">
+        <Input
+          placeholder="Search events by title..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="max-w-sm"
+        />
+        <Button variant="outline" onClick={handleSearch}>
+          <Search className="w-4 h-4" />
+        </Button>
+      </div>
+
+      <div className="grid gap-4">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className="border rounded-lg p-4 flex justify-between items-start gap-4"
+          >
+            <div className="space-y-1">
+              <h3 className="font-semibold text-lg">{event.title}</h3>
+              <p className="text-sm text-muted-foreground">{event.type}</p>
+              <p className="text-sm">
+                {event.start_date} → {event.end_date}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button size="icon" variant="ghost" onClick={() => handleEdit(event)}>
+                <Pencil className="w-4 h-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => handleDelete(event.id)}
+              >
+                <Trash2 className="w-4 h-4 text-red-500" />
+              </Button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+        {events.length === 0 && (
+          <p className="text-sm text-muted-foreground">No events found.</p>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center pt-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          <ChevronLeft className="w-4 h-4 mr-1" /> Prev
+        </Button>
+        <span className="text-sm text-muted-foreground">Page {page}</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            const maxPage = Math.ceil(total / LIMIT);
+            if (page < maxPage) setPage((p) => p + 1);
+          }}
+          disabled={page >= Math.ceil(total / LIMIT)}
+        >
+          Next <ChevronRight className="w-4 h-4 ml-1" />
+        </Button>
+      </div>
+
+      <Dialog open={showEdit} onOpenChange={setShowEdit}>
+        <DialogContent className="sm:max-w-sm max-h-[90vh] overflow-y-auto p-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-center">Edit Event</DialogTitle>
+          </DialogHeader>
+          {editTarget && (
+            <EventForm
+              mode="edit"
+              initialData={editTarget}
+              onEventSaved={handleEdited}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
