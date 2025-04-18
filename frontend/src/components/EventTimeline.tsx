@@ -25,12 +25,12 @@ export default function EventTimeline({ refreshKey }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await eventService.fetchEvents();
-      const grouped = data.map((event: Event) => ({
+      const grouped = data.items.map((event: Event) => ({
         id: event.id,
         title: event.title,
       }));
 
-      const timelineItems = data.map((event: Event) => ({
+      const timelineItems = data.items.map((event: Event) => ({
         id: event.id,
         group: event.id,
         title: event.title,
@@ -86,8 +86,8 @@ export default function EventTimeline({ refreshKey }: Props) {
         stackItems={false}
         canMove={true}
         canResize={false}
-        onItemMove={(itemId, dragTime, newGroupOrder) => {
-          handleItemMove(itemId, dragTime);
+        onItemMove={(itemId, dragTime) => {
+          handleItemMove(Number(itemId), dragTime);
         }}
         itemRenderer={({ item, itemContext, getItemProps }) => {
           const { key, ...rest } = getItemProps({

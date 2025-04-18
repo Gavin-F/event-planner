@@ -9,8 +9,10 @@ const api = axios.create({
 });
 
 export interface PaginatedEvents {
-  data: Event[];
-  total: number;
+  data: {
+    items: Event[];
+    total: number;
+  }
 }
 
 export const eventApi = {

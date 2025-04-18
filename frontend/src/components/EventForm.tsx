@@ -54,7 +54,6 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
           placeholder="Event Title"
           {...register("title", { required: "Title is required" })}
         />
-        {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
       </div>
 
       <div className="space-y-1">
@@ -78,7 +77,6 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
             </Select>
           )}
         />
-        {errors.type && <p className="text-sm text-red-500">{errors.type.message}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -88,7 +86,6 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
             type="date"
             {...register("start_date", { required: "Start date is required" })}
           />
-          {errors.start_date && <p className="text-sm text-red-500">{errors.start_date.message}</p>}
         </div>
         <div className="space-y-1">
           <label className="block text-sm font-medium">End Date</label>
@@ -96,7 +93,6 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
             type="date"
             {...register("end_date", { required: "End date is required" })}
           />
-          {errors.end_date && <p className="text-sm text-red-500">{errors.end_date.message}</p>}
         </div>
       </div>
 

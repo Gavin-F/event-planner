@@ -28,12 +28,12 @@ export default function EventList({ refreshKey }: { refreshKey: number }) {
   const fetchData = async () => {
     if (query.trim()) {
       const res = await eventService.searchEvents(query, page, LIMIT);
-      setEvents(res.data);
-      setTotal(res.total);
+      setEvents(res.data.items);
+      setTotal(res.data.total);
     } else {
       const res = await eventService.fetchEvents(page, LIMIT);
-      setEvents(res.data);
-      setTotal(res.total);
+      setEvents(res.data.items);
+      setTotal(res.data.total);
     }
   };
 
