@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Timeline from "react-calendar-timeline";
+import Timeline, { TimelineMarkers, TodayMarker, CustomMarker } from "react-calendar-timeline";
 import moment from "moment";
 import { eventService } from "../services/eventService";
 import "react-calendar-timeline/style.css";
@@ -24,28 +24,30 @@ export default function EventTimeline({ refreshKey }: Props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await eventService.fetchEvents();
-      const grouped = data.items.map((event: Event) => ({
-        id: event.id,
-        title: event.title,
-      }));
+      const res = await eventService.fetchEvents();
+      if (res.success) {
+        const grouped = res.data.items.map((event: Event) => ({
+          id: event.id,
+          title: event.title,
+        }));
 
-      const timelineItems = data.items.map((event: Event) => ({
-        id: event.id,
-        group: event.id,
-        title: event.title,
-        type: event.type,
-        start_time: moment(event.start_date),
-        end_time: moment(event.end_date),
-        style: {
-          background: typeColors[event.type] || "#94a3b8",
-          color: "#fff",
-          borderRadius: 4,
-        },
-      }));
+        const timelineItems = res.data.items.map((event: Event) => ({
+          id: event.id,
+          group: event.id,
+          title: event.title,
+          type: event.type,
+          start_time: moment(event.start_date),
+          end_time: moment(event.end_date),
+          style: {
+            background: typeColors[event.type],
+            color: "#fff",
+            borderRadius: 4,
+          },
+        }));
 
-      setGroups(grouped);
-      setItems(timelineItems);
+        setGroups(grouped);
+        setItems(timelineItems);
+      }
     };
 
     fetchData();
@@ -59,19 +61,21 @@ export default function EventTimeline({ refreshKey }: Props) {
     const newStart = moment(dragTime);
     const newEnd = moment(dragTime).add(duration, "milliseconds");
 
-    await eventService.updateEvent(itemId, {
+    const res = await eventService.updateEvent(itemId, {
       title: item.title,
       type: item.type,
       start_date: newStart.format("YYYY-MM-DD"),
       end_date: newEnd.format("YYYY-MM-DD"),
     });
 
-    const updatedItems = items.map((i) =>
-      i.id === itemId
-        ? { ...i, start_time: newStart, end_time: newEnd }
-        : i
-    );
-    setItems(updatedItems);
+    if (res.success) {
+      const updatedItems = items.map((i) =>
+        i.id === itemId
+          ? { ...i, start_time: newStart, end_time: newEnd }
+          : i
+      );
+      setItems(updatedItems);
+    }
   };
 
   return (
@@ -79,7 +83,7 @@ export default function EventTimeline({ refreshKey }: Props) {
       <Timeline
         groups={groups}
         items={items}
-        defaultTimeStart={Number(moment().subtract(1, "month"))}
+        defaultTimeStart={Number(moment().subtract(2, "month"))}
         defaultTimeEnd={Number(moment().add(2, "month"))}
         lineHeight={40}
         itemHeightRatio={0.9}
@@ -93,9 +97,13 @@ export default function EventTimeline({ refreshKey }: Props) {
           const { key, ...rest } = getItemProps({
             style: {
               ...item.style,
+              minWidth: "80px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
+              justifyContent: "center",
               padding: "0 8px",
               fontSize: 12,
               fontWeight: 500,
@@ -104,12 +112,17 @@ export default function EventTimeline({ refreshKey }: Props) {
 
           return (
             <div key={key} {...rest}>
-              <span>{item.title}</span>
-              <span style={{ opacity: 0.75, fontSize: "0.7rem" }}>{item.type}</span>
+              {item.title}
             </div>
           );
         }}
-      />
+      >
+        <TimelineMarkers>
+          <TodayMarker>
+          </TodayMarker>
+        </TimelineMarkers>
+
+      </Timeline>
     </div>
   );
 }
