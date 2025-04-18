@@ -122,3 +122,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.rct-items {
+  z-index: 0 !important;
+}
+
+.rct-item {
+  z-index: 0 !important;
+}
+
+.rct-sidebar {
+  z-index: 0 !important;
+}
+

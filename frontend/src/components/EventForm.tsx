@@ -10,19 +10,17 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { createEvent, updateEvent } from "../services/api";
-import { Event } from "../types/Event";
+import { eventService } from "../services/eventService";
 
 interface Props {
-  mode: "create" | "edit";
-  initialData?: Event;
   onEventSaved: () => void;
+  mode: "create" | "edit";
+  initialData?: any;
 }
 
 const EVENT_TYPES = ["Merger", "Dividends", "New Capital", "Hire"];
 
-export default function EventForm({ mode, initialData, onEventSaved }: Props) {
+export default function EventForm({ onEventSaved, mode, initialData }: Props) {
   const {
     register,
     handleSubmit,
@@ -39,12 +37,11 @@ export default function EventForm({ mode, initialData, onEventSaved }: Props) {
   });
 
   const onSubmit = async (data: any) => {
-    if (mode === "edit" && initialData?.id) {
-      await updateEvent(initialData.id, data);
-    } else {
-      await createEvent(data);
+    if (mode === "create") {
+      await eventService.createEvent(data);
+    } else if (initialData) {
+      await eventService.updateEvent(initialData.id, data);
     }
-
     onEventSaved();
     reset();
   };

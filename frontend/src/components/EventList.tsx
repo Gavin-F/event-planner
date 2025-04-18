@@ -5,7 +5,7 @@ import { Trash2, Pencil, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { getEvents, deleteEvent, searchEvents } from "../services/api";
+import { eventService } from "../services/eventService";
 import EventForm from "./EventForm";
 
 interface Event {
@@ -27,11 +27,11 @@ export default function EventList({ refreshKey }: { refreshKey: number }) {
 
   const fetchData = async () => {
     if (query.trim()) {
-      const res = await searchEvents(query, page, LIMIT);
+      const res = await eventService.searchEvents(query, page, LIMIT);
       setEvents(res.data);
       setTotal(res.total);
     } else {
-      const res = await getEvents(page, LIMIT);
+      const res = await eventService.fetchEvents(page, LIMIT);
       setEvents(res.data);
       setTotal(res.total);
     }
@@ -48,7 +48,7 @@ export default function EventList({ refreshKey }: { refreshKey: number }) {
 
   const handleDelete = async (id: number) => {
     if (confirm("Delete this event?")) {
-      await deleteEvent(id);
+      await eventService.deleteEvent(id);
       fetchData();
     }
   };
@@ -68,8 +68,8 @@ export default function EventList({ refreshKey }: { refreshKey: number }) {
       <form
         className="flex gap-2 items-center"
         onSubmit={(e) => {
-          e.preventDefault(); // ⛔ prevent page reload
-          handleSearch();     // ✅ trigger your search
+          e.preventDefault();
+          handleSearch();
         }}
       >
         <Input

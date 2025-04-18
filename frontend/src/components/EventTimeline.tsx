@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Timeline from "react-calendar-timeline";
 import moment from "moment";
-import { getEvents, updateEvent } from "../services/api";
+import { eventService } from "../services/eventService";
 import "react-calendar-timeline/style.css";
 import { Event } from "../types/Event";
 
@@ -24,15 +24,13 @@ export default function EventTimeline({ refreshKey }: Props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getEvents();
-      const raw = res.data;
-
-      const grouped = raw.map((event: Event) => ({
+      const { data } = await eventService.fetchEvents();
+      const grouped = data.map((event: Event) => ({
         id: event.id,
         title: event.title,
       }));
 
-      const timelineItems = raw.map((event: Event) => ({
+      const timelineItems = data.map((event: Event) => ({
         id: event.id,
         group: event.id,
         title: event.title,
@@ -61,7 +59,7 @@ export default function EventTimeline({ refreshKey }: Props) {
     const newStart = moment(dragTime);
     const newEnd = moment(dragTime).add(duration, "milliseconds");
 
-    await updateEvent(itemId, {
+    await eventService.updateEvent(itemId, {
       title: item.title,
       type: item.type,
       start_date: newStart.format("YYYY-MM-DD"),
@@ -81,8 +79,8 @@ export default function EventTimeline({ refreshKey }: Props) {
       <Timeline
         groups={groups}
         items={items}
-        defaultTimeStart={moment().subtract(1, "month")}
-        defaultTimeEnd={moment().add(2, "month")}
+        defaultTimeStart={Number(moment().subtract(1, "month"))}
+        defaultTimeEnd={Number(moment().add(2, "month"))}
         lineHeight={40}
         itemHeightRatio={0.9}
         stackItems={false}
