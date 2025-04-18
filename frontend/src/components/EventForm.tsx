@@ -25,6 +25,7 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
     register,
     handleSubmit,
     control,
+    watch,
     reset,
     formState: { errors }
   } = useForm({
@@ -35,6 +36,9 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
       end_date: "",
     }
   });
+
+  const startDate = watch("start_date");
+  const endDate = watch("end_date");
 
   const onSubmit = async (data: any) => {
     if (mode === "create") {
@@ -54,6 +58,7 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
           placeholder="Event Title"
           {...register("title", { required: "Title is required" })}
         />
+        {errors.title && <p className="text-sm text-red-500">{errors.title.message as string}</p>}
       </div>
 
       <div className="space-y-1">
@@ -77,6 +82,7 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
             </Select>
           )}
         />
+        {errors.type && <p className="text-sm text-red-500">{errors.type.message as string}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -84,15 +90,33 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
           <label className="block text-sm font-medium">Start Date</label>
           <Input
             type="date"
-            {...register("start_date", { required: "Start date is required" })}
+            {...register("start_date", {
+              required: "Start date is required",
+              validate: (value) => {
+                if (endDate && value && value > endDate) {
+                  return "Start date must be before end date";
+                }
+                return true;
+              }
+            })}
           />
+          {errors.start_date && <p className="text-sm text-red-500">{errors.start_date.message as string}</p>}
         </div>
         <div className="space-y-1">
           <label className="block text-sm font-medium">End Date</label>
           <Input
             type="date"
-            {...register("end_date", { required: "End date is required" })}
+            {...register("end_date", {
+              required: "End date is required",
+              validate: (value) => {
+                if (startDate && value && value < startDate) {
+                  return "End date must be after start date";
+                }
+                return true;
+              }
+            })}
           />
+          {errors.end_date && <p className="text-sm text-red-500">{errors.end_date.message as string}</p>}
         </div>
       </div>
 

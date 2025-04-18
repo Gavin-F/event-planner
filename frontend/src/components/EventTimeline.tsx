@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Timeline, { TimelineMarkers, TodayMarker, CustomMarker } from "react-calendar-timeline";
+import Timeline, { TimelineMarkers, TodayMarker } from "react-calendar-timeline";
 import moment from "moment";
 import { eventService } from "../services/eventService";
 import "react-calendar-timeline/style.css";
