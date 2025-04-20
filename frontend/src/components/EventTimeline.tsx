@@ -6,6 +6,8 @@ import moment from "moment";
 import { eventService } from "../services/eventService";
 import "react-calendar-timeline/style.css";
 import { Event } from "../types/Event";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 interface Props {
   refreshKey: number;
@@ -61,6 +63,13 @@ export default function EventTimeline({ refreshKey }: Props) {
     const newStart = moment(dragTime);
     const newEnd = moment(dragTime).add(duration, "milliseconds");
 
+    const updatedItems = items.map((i) =>
+      i.id === itemId
+        ? { ...i, start_time: newStart, end_time: newEnd }
+        : i
+    );
+    setItems(updatedItems);
+
     const res = await eventService.updateEvent(itemId, {
       title: item.title,
       type: item.type,
@@ -68,13 +77,10 @@ export default function EventTimeline({ refreshKey }: Props) {
       end_date: newEnd.format("YYYY-MM-DD"),
     });
 
-    if (res.success) {
-      const updatedItems = items.map((i) =>
-        i.id === itemId
-          ? { ...i, start_time: newStart, end_time: newEnd }
-          : i
-      );
-      setItems(updatedItems);
+    if (!res.success) {
+      toast.error("Failed to update event. Please try again.");
+    } else {
+      toast.success("Event updated!");
     }
   };
 
@@ -126,9 +132,9 @@ export default function EventTimeline({ refreshKey }: Props) {
           <TodayMarker>
           </TodayMarker>
         </TimelineMarkers>
-
       </Timeline>
       )}
+    <Toaster />
     </div>
   );
 }
