@@ -21,9 +21,7 @@ export const eventService = {
   },
 
   async deleteEvent(id: number) {
-    const res = await eventApi.delete(id);
-    if (!res.success) throw new Error(res.error!.message);
-    return res;
+    await eventApi.delete(id);
   },
 
   async searchEvents(query: string, page = 1, limit = 10) {

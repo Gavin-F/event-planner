@@ -80,6 +80,11 @@ export default function EventTimeline({ refreshKey }: Props) {
 
   return (
     <div className="mt-4 border rounded">
+      {items.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          No events scheduled yet.
+        </div>
+      ) : (
       <Timeline
         groups={groups}
         items={items}
@@ -123,6 +128,7 @@ export default function EventTimeline({ refreshKey }: Props) {
         </TimelineMarkers>
 
       </Timeline>
+      )}
     </div>
   );
 }

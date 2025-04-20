@@ -1,4 +1,4 @@
-from backend.app.utils.exceptions import ValidationError
+from app.utils.exceptions import ValidationError
 from ..models.event_model import Event
 from .. import db
 

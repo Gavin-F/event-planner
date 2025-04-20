@@ -15,8 +15,8 @@ def get_events():
         limit = int(request.args.get("limit", 10))
         events, total = event_service.get_all_events(page, limit)
         return success_response(paginated_data(events_schema.dump(events), total))
-    except Exception:
-        return error_response("Internal server error", 500)
+    except Exception as e:
+        return error_response(str(e), 500)
 
 @events_bp.route("/", methods=["POST"])
 def create_event():
@@ -26,8 +26,8 @@ def create_event():
         return success_response(event_schema.dump(new_event), status_code=201)
     except ValidationError as e:
         return error_response(str(e), 400)
-    except Exception:
-        return error_response("Internal server error", 500)
+    except Exception as e:
+        return error_response(str(e), 500)
 
 @events_bp.route("/<int:event_id>", methods=["GET"])
 def get_event(event_id):
@@ -36,8 +36,8 @@ def get_event(event_id):
         return success_response(event_schema.dump(event))
     except NotFoundError as e:
         return error_response(str(e), 404)
-    except Exception:
-        return error_response("Internal server error", 500)
+    except Exception as e:
+        return error_response(str(e), 500)
 
 @events_bp.route("/<int:event_id>", methods=["PUT"])
 def update_event(event_id):
@@ -49,18 +49,19 @@ def update_event(event_id):
         return error_response(str(e), 404)
     except ValidationError as e:
         return error_response(str(e), 400)
-    except Exception:
-        return error_response("Internal server error", 500)
+    except Exception as e:
+        return error_response(str(e), 500)
+
 
 @events_bp.route("/<int:event_id>", methods=["DELETE"])
 def delete_event(event_id):
     try:
         event_service.delete_event(event_id)
-        return success_response(data=None, status_code=204)
+        return success_response(status_code=204)
     except NotFoundError as e:
         return error_response(str(e), 404)
-    except Exception:
-        return error_response("Internal server error", 500)
+    except Exception as e:
+        return error_response(str(e), 500)
 
 @events_bp.route("/search", methods=["GET"])
 def search_events():
@@ -70,5 +71,5 @@ def search_events():
         limit = int(request.args.get("limit", 10))
         events, total = event_service.search_events(title, page, limit)
         return success_response(paginated_data(events_schema.dump(events), total))
-    except Exception:
-        return error_response("Internal server error", 500)
+    except Exception as e:
+        return error_response(str(e), 500)
