@@ -45,7 +45,7 @@ export const eventApi = {
   },
 
   delete(id: number): Promise<void>{
-    return api.delete(`/${id}`).then(res => {});
+    return api.delete(`/${id}`).then();
   },
 
   search(query: string, page = 1, limit = 10): Promise<PaginatedEventsResponse> {

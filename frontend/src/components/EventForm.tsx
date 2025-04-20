@@ -11,11 +11,12 @@ import {
   SelectItem
 } from "@/components/ui/select";
 import { eventService } from "../services/eventService";
+import { Event } from "../types/Event";
 
 interface Props {
   onEventSaved: () => void;
   mode: "create" | "edit";
-  initialData?: any;
+  initialData?: Event
 }
 
 const EVENT_TYPES = ["Merger", "Dividends", "New Capital", "Hire"];
@@ -40,7 +41,7 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
   const startDate = watch("start_date");
   const endDate = watch("end_date");
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Omit<Event, "id">) => {
     if (mode === "create") {
       await eventService.createEvent(data);
     } else if (initialData) {

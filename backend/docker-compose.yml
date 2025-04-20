@@ -28,5 +28,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  frontend:
+    build:
+      context: ../frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/
+    depends_on:
+      - backend
+
+
 volumes:
   pgdata:

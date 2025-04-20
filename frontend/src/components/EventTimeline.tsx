@@ -13,6 +13,21 @@ interface Props {
   refreshKey: number;
 }
 
+interface TimelineItem {
+  id: number;
+  group: number;
+  title: string;
+  type: string;
+  start_time: moment.Moment;
+  end_time: moment.Moment;
+  style: React.CSSProperties;
+}
+
+interface TimelineGroup {
+  id: number;
+  title: string;
+}
+
 const typeColors: Record<string, string> = {
   Merger: "#3b82f6",
   Dividends: "#10b981",
@@ -21,8 +36,8 @@ const typeColors: Record<string, string> = {
 };
 
 export default function EventTimeline({ refreshKey }: Props) {
-  const [items, setItems] = useState<any[]>([]);
-  const [groups, setGroups] = useState<any[]>([]);
+  const [items, setItems] = useState<TimelineItem[]>([]);
+  const [groups, setGroups] = useState<TimelineGroup[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,7 +119,7 @@ export default function EventTimeline({ refreshKey }: Props) {
         onItemMove={(itemId, dragTime) => {
           handleItemMove(Number(itemId), dragTime);
         }}
-        itemRenderer={({ item, itemContext, getItemProps }) => {
+        itemRenderer={({ item, getItemProps }) => {
           const { key, ...rest } = getItemProps({
             style: {
               ...item.style,

@@ -18,7 +18,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from .routes.events import events_bp
+    from .routes.event_routes import events_bp
     app.register_blueprint(events_bp, url_prefix="/api/events")
 
     return app
