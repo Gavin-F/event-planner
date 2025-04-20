@@ -4,7 +4,7 @@ An event planner app that allows users to create, edit, delete, search events wi
 
 ---
 
-## ✨ Features
+## Features
 
 - Create new events
 - Edit existing events
@@ -18,11 +18,11 @@ An event planner app that allows users to create, edit, delete, search events wi
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js, TypeScript, TailwindCSS, react-hook-form, Sonner (toasts), react-calendar-timeline
 - **Backend**: Flask, SQLAlchemy, Alembic (Migrations), PostgreSQL
-- **Containerization**: Docker, Docker Compose
+- **Containerization**: Docker
 
 ---
 
