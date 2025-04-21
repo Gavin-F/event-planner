@@ -50,5 +50,4 @@ docker-compose up --build
 ```
 
 - Frontend available at [http://localhost:3000](http://localhost:3000)
-- Backend available at [http://localhost:5000](http://localhost:5000/api/events)
 
