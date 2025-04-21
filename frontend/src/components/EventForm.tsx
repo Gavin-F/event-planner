@@ -57,7 +57,10 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
         <label className="block text-sm font-medium">Title</label>
         <Input
           placeholder="Event Title"
-          {...register("title", { required: "Title is required" })}
+          {...register("title", { 
+            required: "Title is required",
+            maxLength: { value: 100, message: "Title must be at most 100 characters" }
+          })}
         />
         {errors.title && <p className="text-sm text-red-500">{errors.title.message as string}</p>}
       </div>
