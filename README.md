@@ -27,7 +27,24 @@ An event planner app that allows users to create, edit, delete, search events wi
 ---
 
 ## Run with Docker
+#### Clone the repo
+```bash
+git clone git@github.com:Gavin-F/event-planner.git
+cd ./event-planner/backend
+```
+#### Create .env file
+```
+Create .env in /backend and paste the following:
 
+FLASK_APP=run.py
+FLASK_ENV=development
+
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=events_db
+DATABASE_URL=postgresql://postgres:postgres@db:5432/events_db
+```
+#### Run the application
 ```bash
 docker-compose up --build
 ```
