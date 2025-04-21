@@ -59,6 +59,7 @@ export default function EventForm({ onEventSaved, mode, initialData }: Props) {
           placeholder="Event Title"
           {...register("title", { 
             required: "Title is required",
+            validate: (value) => value.trim().length > 0 || "Title cannot be empty",
             maxLength: { value: 100, message: "Title must be at most 100 characters" }
           })}
         />
